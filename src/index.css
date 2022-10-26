@@ -1,13 +1,34 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@font-face {
+    font-family: 'PlusJakartaSansRegular';
+    src: url('/src/assets/fonts/PlusJakartaSansRegular.eot');
+    src: url('/src/assets/fonts/PlusJakartaSansRegular.eot') format('embedded-opentype'), url('/src/assets/fonts/PlusJakartaSansRegular.woff2') format('woff2'), url('/src/assets/fonts/PlusJakartaSansRegular.woff') format('woff'), url('/src/assets/fonts/PlusJakartaSansRegular.ttf') format('truetype'), url('/src/assets/fonts/PlusJakartaSansRegular.svg#PlusJakartaSansRegular') format('svg');
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+:root {
+    --purple-main: #635FC7;
+    --purple-light: #A8A4FF;
+    --red-main: #EA5555;
+    --red-light: #FF9898;
+    --medium-grey: #828FA3;
+    --light-grey: #F4F7FD;
+    --dark-grey: #2B2C37;
+    --vDark-grey: #20212C;
+    --lines-dark: #3E3F4E;
+    --lines-light: #E4EBFA;
+    --black: #000112;
+    --white: #FFFFFF;
+}
+
+body {
+    margin: 0;
+    font-family: 'PlusJakartaSansRegular', 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+button {
+    background-color: transparent;
+    border: none;
+    appearance: none;
+    cursor: pointer;
 }
