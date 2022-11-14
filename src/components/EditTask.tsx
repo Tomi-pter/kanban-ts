@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { EditTaskProps, TaskCopy } from '../interfaces/interface';
+import { EditTaskProps, Errors, NewTask } from '../interfaces/interface';
 import { RootState } from '../store/store';
 import { ItemDetails } from './styledComponents/styles';
 import close from '../assets/icons/icon-cross.svg';
@@ -23,14 +23,22 @@ const EditTask = ({
       state.board.data.boards.find((brd) => brd.name === state.board.boardName)
         ?.columns
   );
+  const taskList = useSelector((state: RootState) =>
+    state.board.data.boards
+      .find((brd) => brd.name === state.board.boardName)
+      ?.columns.map((cols) => cols.tasks)
+  );
 
   const [newTask, setNewTask] = useState(taskDetails);
+  const [errors, setErrors] = useState<Errors>({
+    title: '',
+    subs: ''
+  });
   let subsList: Array<{ title: string; isCompleted: boolean }> = JSON.parse(
     JSON.stringify(newTask?.subtasks)
   );
 
-  console.log(newTask, subsList);
-  const taskCopy: TaskCopy = JSON.parse(JSON.stringify(newTask));
+  const taskCopy: NewTask = JSON.parse(JSON.stringify(newTask));
 
   const updateFormTitle = (
     e:
@@ -71,13 +79,50 @@ const EditTask = ({
     setNewTask(taskCopy);
   };
 
-  const handleSubmit = () => {
-    newTask && dispatch(editTask({ newTask, colName, taskTitle }));
-    handleDimClicked();
+  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if (newTask && newTask.title.length < 1) {
+      setErrors({
+        title: 'please name your task',
+        subs: ''
+      });
+    } else {
+      const duplicate = taskList
+        ?.map((tsk) =>
+          tsk
+            .filter((ts) => ts.title === newTask?.title)
+            .flatMap((dup) => dup.title)
+        )
+        .flat();
+      console.log(duplicate);
+      const cols = newTask?.subtasks.map((subs) => subs.title);
+
+      if (duplicate && duplicate.length > 0 && duplicate[0] !== taskTitle) {
+        setErrors({
+          title: 'task already exists',
+          subs: ''
+        });
+      } else {
+        if (cols?.find((col) => col.length < 1) !== undefined) {
+          setErrors({
+            title: '',
+            subs: 'please name your subtask'
+          });
+        } else if (cols?.some((col, index) => cols.indexOf(col) !== index)) {
+          setErrors({
+            title: '',
+            subs: 'there is a duplicate subtask'
+          });
+        } else {
+          newTask && dispatch(editTask({ newTask, colName, taskTitle }));
+          handleDimClicked();
+        }
+      }
+    }
   };
 
   return (
-    <ItemDetails onClick={(e) => dontCloseModal(e)}>
+    <ItemDetails onClick={(e) => dontCloseModal(e)} className="addtask">
       <div className="container">
         <h2>Edit Task</h2>
         <form>
@@ -90,6 +135,7 @@ const EditTask = ({
             value={newTask?.title}
             onChange={(e) => updateFormTitle(e)}
           />
+          <span className="error">{errors.title}</span>
           <label htmlFor="description">Description</label>
           <textarea
             name="description"
@@ -116,6 +162,7 @@ const EditTask = ({
                 </button>
               </div>
             ))}
+            <span className="error">{errors.subs}</span>
             <button type="button" className="btn add" onClick={addSubs}>
               + Add New Subtask
             </button>
@@ -133,7 +180,11 @@ const EditTask = ({
               </option>
             ))}
           </select>
-          <button type="button" className="btn create" onClick={handleSubmit}>
+          <button
+            type="button"
+            className="btn create"
+            onClick={(e) => handleSubmit(e)}
+          >
             Edit Task
           </button>
         </form>

@@ -1,12 +1,20 @@
 import { ItemDetails } from './styledComponents/styles';
 import close from '../assets/icons/icon-cross.svg';
 import { useState } from 'react';
-import { BoardCopy, ColList, NewBoard } from '../interfaces/interface';
-import { useDispatch } from 'react-redux';
+import { BoardCopy, ColList, Errors, NewBoard } from '../interfaces/interface';
+import { useDispatch, useSelector } from 'react-redux';
 import { addBoard } from '../store/board';
+import { RootState } from '../store/store';
 
-const AddBoard = () => {
+interface AddBoardProps {
+  closeModal: () => void;
+}
+
+const AddBoard = ({ closeModal }: AddBoardProps) => {
   const dispatch = useDispatch();
+  const boardList = useSelector((state: RootState) =>
+    state.board.data.boards.map((brd) => brd.name)
+  );
 
   const [newBoard, setNewBoard] = useState<NewBoard>({
     name: '',
@@ -16,6 +24,10 @@ const AddBoard = () => {
         tasks: []
       }
     ]
+  });
+  const [errors, setErrors] = useState<Errors>({
+    title: '',
+    subs: ''
   });
   let colList: Array<ColList> = JSON.parse(JSON.stringify(newBoard?.columns));
   console.log(newBoard, colList);
@@ -57,8 +69,39 @@ const AddBoard = () => {
     e.stopPropagation();
   };
 
-  const handleSubmit = () => {
-    dispatch(addBoard(newBoard));
+  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if (newBoard.name.length < 1) {
+      setErrors({
+        title: 'please name your board',
+        subs: ''
+      });
+    } else {
+      const duplicate = boardList.find((brlist) => brlist === newBoard.name);
+      const cols = newBoard.columns.map((col) => col.name);
+
+      if (duplicate) {
+        setErrors({
+          title: 'board already exists',
+          subs: ''
+        });
+      } else {
+        if (cols.find((col) => col.length < 1) !== undefined) {
+          setErrors({
+            title: '',
+            subs: 'please name your column'
+          });
+        } else if (cols.some((col, index) => cols.indexOf(col) !== index)) {
+          setErrors({
+            title: '',
+            subs: 'there is a duplicate column'
+          });
+        } else {
+          dispatch(addBoard(newBoard));
+          closeModal();
+        }
+      }
+    }
   };
 
   return (
@@ -76,6 +119,7 @@ const AddBoard = () => {
             onChange={(e) => updateFormTitle(e)}
             // required
           />
+          <span className="error">{errors.title}</span>
           <div className="columns">
             <label htmlFor="">Board Columns</label>
             {newBoard?.columns.map((col, index) => (
@@ -86,18 +130,18 @@ const AddBoard = () => {
                   id="name"
                   value={col.name}
                   onChange={(e) => setColName(e, index)}
-                  //   required
                 />
                 <button type="button" onClick={() => delSubs(index)}>
                   <img src={close} alt="close" />
                 </button>
               </div>
             ))}
+            <span className="error">{errors.subs}</span>
             <button type="button" className="btn add" onClick={addCol}>
               + Add New Column
             </button>
           </div>
-          <button type="submit" className="btn create" onClick={handleSubmit}>
+          <button className="btn create" onClick={(e) => handleSubmit(e)}>
             Create New Board
           </button>
         </form>
