@@ -6,7 +6,8 @@ import {
   NewTask,
   RootState,
   SetIsCompleted,
-  SetStatus
+  SetStatus,
+  DND
 } from '../interfaces/interface';
 
 let activeBoard = datajson.boards[0].name;
@@ -17,7 +18,13 @@ const newData = datajson.boards.filter((brd) =>
 const data = {
   boards: newData
 };
-const initialState: RootState = { boardName: activeBoard, data, sideBar };
+let theme: boolean = true;
+const initialState: RootState = {
+  boardName: activeBoard,
+  data,
+  sideBar,
+  theme
+};
 
 const boardSlice = createSlice({
   name: 'board',
@@ -28,6 +35,9 @@ const boardSlice = createSlice({
     },
     setSidebar: (state, action: PayloadAction<boolean>) => {
       state.sideBar = action.payload;
+    },
+    setTheme: (state, action: PayloadAction<boolean>) => {
+      state.theme = action.payload;
     },
     setIsCompleted: (state, action: PayloadAction<SetIsCompleted>) => {
       const subTasks = state.data.boards
@@ -161,7 +171,37 @@ const boardSlice = createSlice({
         ? (state.boardName = state.data.boards[0].name)
         : (state.boardName = '');
     },
-    dragndropTask: () => {}
+    dragndropTask: (state, action: PayloadAction<DND>) => {
+      const { colName, dragIndex, hoverIndex, dragStatus } = action.payload;
+
+      const taskList =
+        colName === dragStatus
+          ? state.data.boards
+              .find((brds) => brds.name === state.boardName)
+              ?.columns?.find((col) => col.name === colName)?.tasks
+          : state.data.boards
+              .find((brds) => brds.name === state.boardName)
+              ?.columns?.find((col) => col.name === dragStatus)?.tasks;
+
+      if (taskList && dragIndex !== undefined) {
+        if (dragIndex !== hoverIndex) {
+          const [taskToMove] = taskList.splice(dragIndex, 1);
+          taskToMove.status = colName;
+          console.log(taskToMove.status, dragStatus);
+
+          hoverIndex
+            ? state.data.boards
+                .find((brds) => brds.name === state.boardName)
+                ?.columns?.find((col) => col.name === colName)
+                ?.tasks.splice(hoverIndex, 0, taskToMove)
+            : state.data.boards
+                .find((brds) => brds.name === state.boardName)
+                ?.columns?.find((col) => col.name === colName)
+                ?.tasks.push(taskToMove);
+          console.log(action.payload);
+        }
+      }
+    }
   }
 });
 
@@ -169,12 +209,14 @@ export const {
   setActiveBoard,
   setIsCompleted,
   setSidebar,
+  setTheme,
   setStatus,
   editTask,
   deleteTask,
   addTask,
   editBoard,
   addBoard,
-  deleteBoard
+  deleteBoard,
+  dragndropTask
 } = boardSlice.actions;
 export const boardReducer = boardSlice.reducer;

@@ -97,6 +97,7 @@ const ViewTask = ({
               {taskDetails?.subtasks.filter((subs) => subs.isCompleted).length}{' '}
               of {taskDetails?.subtasks.length})
             </p>
+            <p>{taskDetails?.description}</p>
           </div>
           <div className="btn">
             <button onClick={toggleOptions}>
@@ -126,6 +127,7 @@ const ViewTask = ({
             </li>
           ))}
         </ul>
+        <label htmlFor="status">Current Status</label>
         <select
           name="status"
           id="status"

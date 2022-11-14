@@ -2,6 +2,7 @@ export interface RootState {
   boardName: string;
   data: RootJsonData;
   sideBar: boolean;
+  theme: boolean;
 }
 
 export interface RootJsonData {
@@ -29,6 +30,12 @@ export interface ItemProps {
   }[];
   taskIndex: number;
   colName: string;
+  moveList: (
+    dragIndex: number,
+    hoverIndex: number,
+    colName: string,
+    dragStatus: string
+  ) => void;
 }
 
 export interface ViewTaskProps {
@@ -115,16 +122,6 @@ export interface AddTaskProps {
   closeModal: () => void;
 }
 
-export interface TaskCopy {
-  title: string;
-  description: string;
-  status: string;
-  subtasks: {
-    title: string;
-    isCompleted: boolean;
-  }[];
-}
-
 export interface BoardCopy {
   name: string;
   columns: {
@@ -144,10 +141,10 @@ export interface BoardCopy {
 export interface ColList {
   name: string;
   tasks: {
-    title: '';
-    description: '';
-    status: '';
-    subtasks: { title: ''; isCompleted: false }[];
+    title: string;
+    description: string;
+    status: string;
+    subtasks: { title: string; isCompleted: false }[];
   }[];
 }
 
@@ -175,4 +172,16 @@ export interface NewBoard {
     name: string;
     tasks: {}[];
   }[];
+}
+
+export interface DND {
+  colName: string;
+  dragIndex: number;
+  hoverIndex?: number;
+  dragStatus: string;
+}
+
+export interface Errors {
+  title: string;
+  subs: string;
 }
