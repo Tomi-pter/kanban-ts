@@ -9,6 +9,7 @@ export const SHeader = styled.header`
   top: -1px;
   z-index: 2;
   background-color: var(--white);
+  /* width: 100vw; */
 
   &.dark {
     background-color: var(--dark-grey);
@@ -32,13 +33,15 @@ export const SHeader = styled.header`
     }
   }
 
-  &::after {
-    content: '';
-    position: absolute;
-    width: 1.5px;
-    height: 100%;
-    background-color: var(--lines-light);
-    left: 30%;
+  @media screen and (min-width: 641px) {
+    &::after {
+      content: '';
+      position: absolute;
+      width: 1.5px;
+      height: 100%;
+      background-color: var(--lines-light);
+      left: clamp(300px, 30vw, 500px);
+    }
   }
 
   h1 {
@@ -82,7 +85,7 @@ export const SHeader = styled.header`
     }
     h1 {
       position: absolute;
-      left: 32%;
+      left: clamp(310px, 31vw, 510px);
     }
     .down {
       display: none;
@@ -109,6 +112,10 @@ export const Modal = styled.div`
 
     .addtask {
       margin-top: 2rem;
+
+      div {
+        width: 100%;
+      }
     }
 
     &.dark {
@@ -147,8 +154,18 @@ export const BoardList = styled.section`
   margin-inline: auto;
   margin-top: 1rem;
   border-radius: 0.5rem;
-  overflow-y: scroll;
   color: var(--medium-grey);
+  display: flex;
+  flex-direction: column;
+
+  &.dark {
+    background-color: var(--dark-grey);
+  }
+
+  .brds {
+    overflow-y: scroll;
+    max-height: 40vh;
+  }
 
   &.side {
     width: 100%;
@@ -189,6 +206,17 @@ export const BoardList = styled.section`
     font-size: 0.75rem;
     letter-spacing: 2.4px;
   }
+
+  div:last-child {
+    margin-inline: auto;
+    margin-bottom: 1rem;
+
+    /* @media screen and (min-width: 641px) {
+      margin-top: 4rem;
+      right: 50%;
+      transform: translateX(50%);
+    } */
+  }
 `;
 
 export const Main = styled.main`
@@ -212,6 +240,7 @@ export const SBoard = styled.section`
   gap: 1.5rem;
   padding: 1rem;
   transition: margin 350ms ease-in-out;
+  position: absolute;
 
   &.dark {
     h3 {
@@ -291,6 +320,22 @@ export const SBoard = styled.section`
         height: 600px;
         background-color: var(--lines-light);
         border-radius: 0.5rem;
+
+        &.addT {
+          margin-top: 3.8rem;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+
+          > button {
+            font-size: 1.5rem;
+            color: var(--purple-light);
+          }
+          button:hover {
+            opacity: 0.75;
+          }
+        }
       }
 
       > li {
@@ -471,6 +516,14 @@ export const OptModal = styled.div`
   left: 0;
   top: 10vh;
   z-index: 1;
+
+  &.optModal.open {
+    position: fixed;
+
+    > section {
+      margin-top: 2rem;
+    }
+  }
 `;
 
 export const Prompt = styled.div`
@@ -482,6 +535,10 @@ export const Prompt = styled.div`
   background-color: var(--white);
   border-radius: 0.5rem;
   padding: 1rem;
+
+  &.dark {
+    background-color: var(--dark-grey);
+  }
 
   .btns {
     display: flex;
@@ -508,6 +565,10 @@ export const Prompt = styled.div`
 export const SSidebar = styled.aside`
   display: none;
 
+  section {
+    display: none;
+  }
+
   @media screen and (min-width: 641px) {
     display: block;
     position: fixed;
@@ -524,6 +585,9 @@ export const SSidebar = styled.aside`
 
     &.open {
       width: clamp(300px, 30vw, 500px);
+      section {
+        display: flex;
+      }
     }
     .show {
       background-color: var(--purple-main);
@@ -614,9 +678,5 @@ export const SThemeToggle = styled.div`
 
   input.checked + .slider:before {
     transform: translateX(0);
-  }
-
-  &.dark .darkToggle {
-    background-color: var(--bg-dark);
   }
 `;

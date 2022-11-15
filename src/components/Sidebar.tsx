@@ -32,7 +32,10 @@ const Sidebar = () => {
   };
 
   useEffect(() => {
-    document.querySelector('.header.side')?.classList.toggle('active');
+    modalOpen &&
+      document.querySelector('.header.side')?.classList.add('active');
+    !modalOpen &&
+      document.querySelector('.header.side')?.classList.remove('active');
   }, [modalOpen]);
 
   const handleShowClick = () => {
@@ -53,16 +56,18 @@ const Sidebar = () => {
     <SSidebar className="side">
       <BoardList className="boardList side">
         <h3>All boards ({boardNames.length})</h3>
-        {boardNames.map((brdname) => (
-          <button
-            key={brdname}
-            onClick={() => handleOptChange(brdname)}
-            className={brdname === activeBoard ? 'active' : ''}
-          >
-            <img src={brdsvg} alt="" />
-            <span>{brdname}</span>
-          </button>
-        ))}
+        <div className="brds">
+          {boardNames.map((brdname) => (
+            <button
+              key={brdname}
+              onClick={() => handleOptChange(brdname)}
+              className={brdname === activeBoard ? 'active' : ''}
+            >
+              <img src={brdsvg} alt="" />
+              <span>{brdname}</span>
+            </button>
+          ))}
+        </div>
         <button
           onClick={() => {
             setAddBoard(true);

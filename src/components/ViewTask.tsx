@@ -1,13 +1,18 @@
 import options from '../assets/icons/icon-vertical-ellipsis.svg';
 import { useSelector, useDispatch } from 'react-redux';
-import { useState, useRef, useLayoutEffect } from 'react';
+import { useState, useRef, useLayoutEffect, useEffect } from 'react';
 import {
   IsCompletedFunc,
   StatusP,
   ViewTaskProps
 } from '../interfaces/interface';
 import { RootState } from '../store/store';
-import { ItemDetails, SOptions } from './styledComponents/styles';
+import {
+  ItemDetails,
+  OptModal,
+  Prompt,
+  SOptions
+} from './styledComponents/styles';
 import { deleteTask, setIsCompleted, setStatus } from '../store/board';
 import EditTask from './EditTask';
 
@@ -29,14 +34,18 @@ const ViewTask = ({
       state.board.data.boards.find((brd) => brd.name === state.board.boardName)
         ?.columns
   );
+  const theme = useSelector((state: RootState) => state.board.theme);
 
   const [optionsClicked, setOptionsClicked] = useState(false);
   const [editClicked, setEditClicked] = useState(false);
+  const [deleteClicked, setDeleteClicked] = useState(false);
   const optionsRef = useRef<HTMLElement>(null);
 
   useLayoutEffect(() => {
-    null !== optionsRef.current &&
-      optionsRef.current.classList.toggle('active');
+    if (null !== optionsRef.current) {
+      optionsClicked && optionsRef.current.classList.add('active');
+      !optionsClicked && optionsRef.current.classList.remove('active');
+    }
   }, [optionsClicked]);
 
   const toggleOptions = () => {
@@ -78,6 +87,18 @@ const ViewTask = ({
     dispatch(setStatus({ status, colName, taskTitle }));
   };
 
+  const handleDelClicked = () => {
+    setDeleteClicked(true);
+    setOptionsClicked(false);
+  };
+
+  useEffect(() => {
+    deleteClicked && document.querySelector('.optModal')?.classList.add('open');
+    !theme
+      ? document.querySelector('.prompt')?.classList.add('dark')
+      : document.querySelector('.prompt')?.classList.remove('dark');
+  }, [deleteClicked, theme]);
+
   const handleDeleteTask = (colName: string, taskTitle: string) => {
     dispatch(deleteTask({ colName, taskTitle }));
     handleDimClicked();
@@ -105,10 +126,33 @@ const ViewTask = ({
             </button>
             <SOptions ref={optionsRef}>
               <button onClick={() => setEditClicked(true)}>Edit Task</button>
-              <button onClick={() => handleDeleteTask(colName, taskTitle)}>
-                Delete Task
-              </button>
+              <button onClick={handleDelClicked}>Delete Task</button>
             </SOptions>
+            {deleteClicked && (
+              <OptModal
+                onClick={() => setDeleteClicked(false)}
+                className="optModal"
+              >
+                <Prompt className="prompt" onClick={(e) => dontCloseModal(e)}>
+                  <h2>Delete this board?</h2>
+                  <p>
+                    Are you sure you want to delete the '{taskTitle}' board?
+                    This action will remove all columns and tasks and cannot be
+                    reversed.
+                  </p>
+                  <div className="btns">
+                    <button
+                      onClick={() => handleDeleteTask(colName, taskTitle)}
+                    >
+                      Delete
+                    </button>
+                    <button onClick={() => setDeleteClicked(false)}>
+                      Cancel
+                    </button>
+                  </div>
+                </Prompt>
+              </OptModal>
+            )}
           </div>
         </div>
         <ul>

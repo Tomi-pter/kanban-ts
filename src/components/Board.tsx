@@ -1,10 +1,11 @@
-import { useEffect, useRef } from 'react';
-import { useDrop } from 'react-dnd';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { dragndropTask } from '../store/board';
 import { RootState } from '../store/store';
 import Item from './Item';
-import { SBoard } from './styledComponents/styles';
+import { OptModal, SBoard } from './styledComponents/styles';
+import { DragDropContext, Droppable } from 'react-beautiful-dnd';
+import EditBoard from './EditBoard';
 
 const Board = () => {
   const dispatch = useDispatch();
@@ -14,34 +15,16 @@ const Board = () => {
   // const boardName = useSelector((state: RootState) => state.board.boardName);
   console.log(board);
 
-  const moveList = (
-    dragIndex: number,
-    hoverIndex: number,
-    colName: string,
-    dragStatus: string
-  ) => {
-    dispatch(dragndropTask({ colName, dragIndex, hoverIndex, dragStatus }));
-  };
-
-  const [, dropRef] = useDrop({
-    accept: 'item',
-    drop: (item: any) => {
-      const dragIndex = item.index;
-      const dragStatus = item.status;
-      const colName = `${ref.current?.title}`;
-      console.log(item, ref.current?.title);
-      dispatch(
-        dragndropTask({
-          colName,
-          dragIndex,
-          dragStatus
-        })
-      );
-    }
-  });
+  // dispatch(
+  //   dragndropTask({
+  //     colName,
+  //     dragIndex,
+  //     dragStatus
+  //   })
+  // );
 
   const ref = useRef<HTMLUListElement>(null);
-  dropRef(ref);
+  const [editClicked, setEditClicked] = useState(false);
 
   const colors = [
     '#49c4e5',
@@ -65,40 +48,104 @@ const Board = () => {
     // console.log(Math.floor(Math.random() * 16777215).toString(16));
   });
 
+  const onDragEnd = (result: any) => {
+    console.log(result);
+    const { source, destination, draggableId } = result;
+    if (!destination) {
+      return;
+    }
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    ) {
+      return;
+    }
+    const dragIndex: number = source.index;
+    const dragStatus: string = source.droppableId;
+    const dropIndex: number = destination.index;
+    const dropStatus: string = destination.droppableId;
+    dispatch(
+      dragndropTask({
+        dragIndex,
+        dragStatus,
+        draggableId,
+        dropIndex,
+        dropStatus
+      })
+    );
+  };
+
+  const handleAddCol = () => {
+    setEditClicked(true);
+  };
+
+  useEffect(() => {
+    document.querySelector('.optModal')?.classList.add('open');
+  }, [editClicked]);
+
+  const closeModal = () => {
+    setEditClicked(false);
+  };
+
   return (
     <>
       {board ? (
         board.map(({ columns }, index) => (
-          <SBoard key={index} className="sboard">
-            {columns.map(({ name, tasks }) => (
-              <div key={name}>
-                <h3>
-                  <div className="circle"></div>
-                  {name} ({tasks.length})
-                </h3>
-                <ul className="tasksList">
-                  {tasks.length > 0 ? (
-                    tasks.map(
-                      ({ title, description, status, subtasks }, index) => (
-                        <Item
-                          taskTitle={title}
-                          description={description}
-                          status={status}
-                          subtasks={subtasks}
-                          key={title}
-                          taskIndex={index}
-                          colName={name}
-                          moveList={moveList}
-                        />
-                      )
-                    )
-                  ) : (
-                    <ul className="tasksList empty" ref={ref} title={name}></ul>
-                  )}
-                </ul>
-              </div>
-            ))}
-          </SBoard>
+          <DragDropContext onDragEnd={onDragEnd} key={index}>
+            <SBoard className="sboard">
+              {columns.map(({ name, tasks }) => (
+                <div key={name}>
+                  <h3>
+                    <div className="circle"></div>
+                    {name} ({tasks.length})
+                  </h3>
+                  <Droppable droppableId={name}>
+                    {(provided: any) => (
+                      <ul
+                        className="tasksList"
+                        ref={provided.innerRef}
+                        {...provided.droppableProps}
+                      >
+                        {tasks.length > 0 ? (
+                          tasks.map(
+                            (
+                              { title, description, status, subtasks },
+                              index
+                            ) => (
+                              <Item
+                                taskTitle={title}
+                                description={description}
+                                status={status}
+                                subtasks={subtasks}
+                                taskIndex={index}
+                                colName={name}
+                                key={`${index.toString()}_${title}`}
+                              />
+                            )
+                          )
+                        ) : (
+                          <ul
+                            className="tasksList empty"
+                            ref={ref}
+                            title={name}
+                          ></ul>
+                        )}
+                        {provided.placeholder}
+                      </ul>
+                    )}
+                  </Droppable>
+                </div>
+              ))}
+              <ul className="tasksList empty addT">
+                <button onClick={handleAddCol}>+ Add Column</button>
+                {editClicked && (
+                  <OptModal className="optModal" onClick={closeModal}>
+                    <EditBoard closeModal={closeModal} />
+                  </OptModal>
+                )}
+              </ul>
+            </SBoard>
+          </DragDropContext>
         ))
       ) : (
         <h1>no board</h1>

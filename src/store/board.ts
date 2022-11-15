@@ -172,33 +172,28 @@ const boardSlice = createSlice({
         : (state.boardName = '');
     },
     dragndropTask: (state, action: PayloadAction<DND>) => {
-      const { colName, dragIndex, hoverIndex, dragStatus } = action.payload;
+      const { dragIndex, dragStatus, draggableId, dropIndex, dropStatus } =
+        action.payload;
 
-      const taskList =
-        colName === dragStatus
-          ? state.data.boards
-              .find((brds) => brds.name === state.boardName)
-              ?.columns?.find((col) => col.name === colName)?.tasks
-          : state.data.boards
-              .find((brds) => brds.name === state.boardName)
-              ?.columns?.find((col) => col.name === dragStatus)?.tasks;
+      const taskList = state.data.boards
+        .find((brds) => brds.name === state.boardName)
+        ?.columns?.find((col) => col.name === dragStatus)?.tasks;
 
-      if (taskList && dragIndex !== undefined) {
-        if (dragIndex !== hoverIndex) {
-          const [taskToMove] = taskList.splice(dragIndex, 1);
-          taskToMove.status = colName;
+      if (taskList) {
+        const [taskToMove] = taskList.splice(dragIndex, 1);
+        if (taskToMove.title === draggableId) {
+          taskToMove.status = dropStatus;
           console.log(taskToMove.status, dragStatus);
 
-          hoverIndex
+          dropStatus === dragStatus
             ? state.data.boards
-                .find((brds) => brds.name === state.boardName)
-                ?.columns?.find((col) => col.name === colName)
-                ?.tasks.splice(hoverIndex, 0, taskToMove)
+                .find((brd) => brd.name === state.boardName)
+                ?.columns.find((col) => col.name === dragStatus)
+                ?.tasks.splice(dropIndex, 0, taskToMove)
             : state.data.boards
-                .find((brds) => brds.name === state.boardName)
-                ?.columns?.find((col) => col.name === colName)
-                ?.tasks.push(taskToMove);
-          console.log(action.payload);
+                .find((brd) => brd.name === state.boardName)
+                ?.columns.find((col) => col.name === dropStatus)
+                ?.tasks.splice(dropIndex, 0, taskToMove);
         }
       }
     }

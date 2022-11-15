@@ -21,11 +21,16 @@ import add from '../assets/icons/icon-add-task-mobile.svg';
 import AddTask from './AddTask';
 import EditBoard from './EditBoard';
 import AddBoard from './AddBoard';
+import ThemeToggle from './ThemeToggle';
 
 const Header = () => {
   const dispatch = useDispatch();
   const boardList = useSelector((state: RootState) => state.board.data.boards);
   const activeBoard = useSelector((state: RootState) => state.board.boardName);
+  const cols = useSelector(
+    (state: RootState) =>
+      state.board.data.boards.find((brd) => brd.name === activeBoard)?.columns
+  );
   const theme = useSelector((state: RootState) => state.board.theme);
   let boardNames: string[] = boardList.map((brdlist) => brdlist.name);
 
@@ -58,16 +63,30 @@ const Header = () => {
   };
 
   useEffect(() => {
-    document.querySelector('.header')?.classList.toggle('active');
-  }, [modalOpen, addTask, editClicked]);
+    modalOpen && document.querySelector('.header')?.classList.add('active');
+    !modalOpen && document.querySelector('.header')?.classList.remove('active');
+  }, [modalOpen]);
 
   const toggleAdd = () => {
     addTask ? setAddTask(false) : setAddTask(true);
+    toggleModal();
   };
+
   addBoard && document.querySelector('.boardList')?.classList.add('inactive');
+
+  useEffect(() => {
+    addTask && document.querySelector('.boardList')?.classList.add('inactive');
+    editClicked &&
+      document.querySelector('.boardList')?.classList.add('inactive');
+  }, [addTask, editClicked]);
 
   const toggleOptions = () => {
     optionsClicked ? setOptionsClicked(false) : setOptionsClicked(true);
+  };
+
+  const toggleEdit = () => {
+    editClicked ? setEditClicked(false) : setEditClicked(true);
+    toggleModal();
   };
 
   deleteClicked && document.querySelector('.sOpt')?.classList.add('prompt');
@@ -96,29 +115,35 @@ const Header = () => {
           {modalOpen && (
             <BoardList className="boardList" onClick={(e) => dontCloseModal(e)}>
               <h3>All boards ({boardNames.length})</h3>
-              {boardNames.map((brdname) => (
-                <button
-                  key={brdname}
-                  onClick={() => handleOptChange(brdname)}
-                  className={brdname === activeBoard ? 'active' : ''}
-                >
-                  <img src={brdsvg} alt="" />
-                  <span>{brdname}</span>
-                </button>
-              ))}
+              <div className="brds">
+                {boardNames.map((brdname) => (
+                  <button
+                    key={brdname}
+                    onClick={() => handleOptChange(brdname)}
+                    className={brdname === activeBoard ? 'active' : ''}
+                  >
+                    <img src={brdsvg} alt="" />
+                    <span>{brdname}</span>
+                  </button>
+                ))}
+              </div>
               <button onClick={() => setAddBoard(true)} className="newBo">
                 <img src={brdsvg} alt="" />
                 <span>+ Create New Board</span>
               </button>
+              <ThemeToggle />
             </BoardList>
           )}
           {addBoard && <AddBoard closeModal={closeModal} />}
-          {addTask && <AddTask closeModal={closeModal} />}
           {editClicked && <EditBoard closeModal={closeModal} />}
+          {addTask && <AddTask closeModal={closeModal} />}
         </Modal>
       </div>
       <div className="end">
-        <button onClick={toggleAdd}>
+        <button
+          onClick={toggleAdd}
+          disabled={cols && (cols?.length > 0 ? false : true)}
+        >
           <img src={add} alt="add task" />
           <span> Add new task</span>
         </button>
@@ -133,7 +158,7 @@ const Header = () => {
             >
               <button
                 onClick={() => {
-                  setEditClicked(true);
+                  toggleEdit();
                   toggleOptions();
                 }}
               >
@@ -143,6 +168,7 @@ const Header = () => {
                 Delete Board
               </button>
             </SOptions>
+
             {deleteClicked && (
               <Prompt className="prompt">
                 <h2>Delete this board?</h2>

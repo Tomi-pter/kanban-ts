@@ -30,12 +30,6 @@ export interface ItemProps {
   }[];
   taskIndex: number;
   colName: string;
-  moveList: (
-    dragIndex: number,
-    hoverIndex: number,
-    colName: string,
-    dragStatus: string
-  ) => void;
 }
 
 export interface ViewTaskProps {
@@ -175,10 +169,11 @@ export interface NewBoard {
 }
 
 export interface DND {
-  colName: string;
   dragIndex: number;
-  hoverIndex?: number;
+  dropIndex: number;
   dragStatus: string;
+  dropStatus: string;
+  draggableId: string;
 }
 
 export interface Errors {

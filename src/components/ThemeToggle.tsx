@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store/store';
 import { setTheme } from '../store/board';
 import { SThemeToggle } from './styledComponents/styles';
+import { useEffect } from 'react';
 
 const ThemeToggle = () => {
   const dispatch = useDispatch();
@@ -13,12 +14,30 @@ const ThemeToggle = () => {
     dispatch(setTheme(theme ? false : true));
   };
 
+  useEffect(() => {
+    !theme
+      ? document
+          .querySelectorAll(
+            'header, .side, main, .sboard, .tasksList, .boardList, .prompt'
+          )
+          ?.forEach((all) => all.classList.add('dark'))
+      : document
+          .querySelectorAll(
+            'header, .side, main, .sboard, .tasksList, .boardList, .prompt'
+          )
+          ?.forEach((all) => all.classList.remove('dark'));
+  });
+
   !theme
     ? document
-        .querySelectorAll('header, .side, main, sboard, .tasksList')
+        .querySelectorAll(
+          'header, .side, main, .sboard, .tasksList, .boardList, .prompt'
+        )
         ?.forEach((all) => all.classList.add('dark'))
     : document
-        .querySelectorAll('header, .side, main, sboard, .tasksList')
+        .querySelectorAll(
+          'header, .side, main, .sboard, .tasksList, .boardList, .prompt'
+        )
         ?.forEach((all) => all.classList.remove('dark'));
 
   return (
