@@ -1,19 +1,18 @@
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import close from '../assets/icons/icon-cross.svg';
 import { AddTaskProps, Errors, NewTask } from '../interfaces/interface';
 import { addTask } from '../store/board';
-import { RootState } from '../store/store';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { ItemDetails } from './styledComponents/styles';
 
 const AddTask = ({ closeModal }: AddTaskProps) => {
-  const dispatch = useDispatch();
-  const statusList = useSelector(
-    (state: RootState) =>
+  const dispatch = useAppDispatch();
+  const statusList = useAppSelector(
+    (state) =>
       state.board.data.boards.find((brd) => brd.name === state.board.boardName)
         ?.columns
   );
-  const taskList = useSelector((state: RootState) =>
+  const taskList = useAppSelector((state) =>
     state.board.data.boards
       .find((brd) => brd.name === state.board.boardName)
       ?.columns.map((cols) => cols.tasks)

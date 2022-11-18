@@ -1,9 +1,8 @@
 // import { FC } from 'react';
 import { useState, useEffect } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
-import { useSelector } from 'react-redux';
 import { ItemProps } from '../interfaces/interface';
-import { RootState } from '../store/store';
+import { useAppSelector } from '../store/hooks';
 import { Modal } from './styledComponents/styles';
 import ViewTask from './ViewTask';
 
@@ -15,7 +14,7 @@ const Item = ({
   taskIndex,
   colName
 }: ItemProps) => {
-  const tasks = useSelector((state: RootState) =>
+  const tasks = useAppSelector((state) =>
     state.board.data.boards
       .find((brd) => brd.name === state.board.boardName)
       ?.columns.find((col) => col.name === colName)

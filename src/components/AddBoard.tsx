@@ -2,17 +2,16 @@ import { ItemDetails } from './styledComponents/styles';
 import close from '../assets/icons/icon-cross.svg';
 import { useState } from 'react';
 import { BoardCopy, ColList, Errors, NewBoard } from '../interfaces/interface';
-import { useDispatch, useSelector } from 'react-redux';
 import { addBoard } from '../store/board';
-import { RootState } from '../store/store';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 
 interface AddBoardProps {
   closeModal: () => void;
 }
 
 const AddBoard = ({ closeModal }: AddBoardProps) => {
-  const dispatch = useDispatch();
-  const boardList = useSelector((state: RootState) =>
+  const dispatch = useAppDispatch();
+  const boardList = useAppSelector((state) =>
     state.board.data.boards.map((brd) => brd.name)
   );
 

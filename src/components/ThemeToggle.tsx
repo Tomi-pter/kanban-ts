@@ -1,14 +1,13 @@
 import sun from '../assets/icons/icon-light-theme.svg';
 import moon from '../assets/icons/icon-dark-theme.svg';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../store/store';
 import { setTheme } from '../store/board';
 import { SThemeToggle } from './styledComponents/styles';
 import { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 
 const ThemeToggle = () => {
-  const dispatch = useDispatch();
-  const theme = useSelector((state: RootState) => state.board.theme);
+  const dispatch = useAppDispatch();
+  const theme = useAppSelector((state) => state.board.theme);
 
   const handleToggle = () => {
     dispatch(setTheme(theme ? false : true));

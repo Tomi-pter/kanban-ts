@@ -1,10 +1,9 @@
-import { useDispatch, useSelector } from 'react-redux';
 import { EditTaskProps, Errors, NewTask } from '../interfaces/interface';
-import { RootState } from '../store/store';
 import { ItemDetails } from './styledComponents/styles';
 import close from '../assets/icons/icon-cross.svg';
 import { useState } from 'react';
 import { editTask } from '../store/board';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 
 const EditTask = ({
   colName,
@@ -17,13 +16,13 @@ const EditTask = ({
     e.stopPropagation();
   };
 
-  const dispatch = useDispatch();
-  const statusList = useSelector(
-    (state: RootState) =>
+  const dispatch = useAppDispatch();
+  const statusList = useAppSelector(
+    (state) =>
       state.board.data.boards.find((brd) => brd.name === state.board.boardName)
         ?.columns
   );
-  const taskList = useSelector((state: RootState) =>
+  const taskList = useAppSelector((state) =>
     state.board.data.boards
       .find((brd) => brd.name === state.board.boardName)
       ?.columns.map((cols) => cols.tasks)

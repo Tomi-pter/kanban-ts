@@ -1,18 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { dragndropTask } from '../store/board';
-import { RootState } from '../store/store';
 import Item from './Item';
 import { OptModal, SBoard } from './styledComponents/styles';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import EditBoard from './EditBoard';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 
 const Board = () => {
-  const dispatch = useDispatch();
-  const board = useSelector((state: RootState) =>
+  const dispatch = useAppDispatch();
+  const board = useAppSelector((state) =>
     state.board.data.boards.filter((brd) => brd.name === state.board.boardName)
   );
-  // const boardName = useSelector((state: RootState) => state.board.boardName);
+  // const boardName = useAppSelector((state) => state.board.boardName);
   console.log(board);
 
   // dispatch(

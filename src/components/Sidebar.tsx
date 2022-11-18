@@ -1,19 +1,18 @@
-import { useDispatch, useSelector } from 'react-redux';
 import viewSide from '../assets/icons/icon-show-sidebar.svg';
 import hideSide from '../assets/icons/icon-hide-sidebar.svg';
-import { RootState } from '../store/store';
 import { BoardList, Modal, SSidebar } from './styledComponents/styles';
 import brdsvg from '../assets/icons/icon-board.svg';
 import { setActiveBoard, setSidebar } from '../store/board';
 import { useEffect, useState } from 'react';
 import AddBoard from './AddBoard';
 import ThemeToggle from './ThemeToggle';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 
 const Sidebar = () => {
-  const dispatch = useDispatch();
-  const sidebar = useSelector((state: RootState) => state.board.sideBar);
-  const boardList = useSelector((state: RootState) => state.board.data.boards);
-  const activeBoard = useSelector((state: RootState) => state.board.boardName);
+  const dispatch = useAppDispatch();
+  const sidebar = useAppSelector((state) => state.board.sideBar);
+  const boardList = useAppSelector((state) => state.board.data.boards);
+  const activeBoard = useAppSelector((state) => state.board.boardName);
   let boardNames: string[] = boardList.map((brdlist) => brdlist.name);
 
   const handleOptChange = (brdname: string) => {

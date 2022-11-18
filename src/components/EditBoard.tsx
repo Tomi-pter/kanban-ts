@@ -1,7 +1,5 @@
 import { ItemDetails } from './styledComponents/styles';
 import close from '../assets/icons/icon-cross.svg';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../store/store';
 import { useState } from 'react';
 import {
   AddTaskProps,
@@ -10,13 +8,14 @@ import {
   Errors
 } from '../interfaces/interface';
 import { editBoard } from '../store/board';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 
 const EditBoard = ({ closeModal }: AddTaskProps) => {
-  const dispatch = useDispatch();
-  const currentBoard = useSelector((state: RootState) =>
+  const dispatch = useAppDispatch();
+  const currentBoard = useAppSelector((state) =>
     state.board.data.boards.find((brd) => brd.name === state.board.boardName)
   );
-  const boardList = useSelector((state: RootState) =>
+  const boardList = useAppSelector((state) =>
     state.board.data.boards.map((brd) => brd.name)
   );
 

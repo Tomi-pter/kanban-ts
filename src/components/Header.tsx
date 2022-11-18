@@ -1,6 +1,4 @@
-import { useSelector, useDispatch } from 'react-redux';
 import { useState, useEffect } from 'react';
-import { RootState } from '../store/store';
 import {
   BoardList,
   Modal,
@@ -22,16 +20,17 @@ import AddTask from './AddTask';
 import EditBoard from './EditBoard';
 import AddBoard from './AddBoard';
 import ThemeToggle from './ThemeToggle';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 
 const Header = () => {
-  const dispatch = useDispatch();
-  const boardList = useSelector((state: RootState) => state.board.data.boards);
-  const activeBoard = useSelector((state: RootState) => state.board.boardName);
-  const cols = useSelector(
-    (state: RootState) =>
+  const dispatch = useAppDispatch();
+  const boardList = useAppSelector((state) => state.board.data.boards);
+  const activeBoard = useAppSelector((state) => state.board.boardName);
+  const cols = useAppSelector(
+    (state) =>
       state.board.data.boards.find((brd) => brd.name === activeBoard)?.columns
   );
-  const theme = useSelector((state: RootState) => state.board.theme);
+  const theme = useAppSelector((state) => state.board.theme);
   let boardNames: string[] = boardList.map((brdlist) => brdlist.name);
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -47,6 +46,7 @@ const Header = () => {
 
   const handleOptChange = (brdname: string) => {
     dispatch(setActiveBoard(brdname));
+    setModalOpen(false);
   };
 
   const toggleModal = () => {

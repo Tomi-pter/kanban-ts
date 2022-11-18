@@ -1,12 +1,10 @@
 import options from '../assets/icons/icon-vertical-ellipsis.svg';
-import { useSelector, useDispatch } from 'react-redux';
 import { useState, useRef, useLayoutEffect, useEffect } from 'react';
 import {
   IsCompletedFunc,
   StatusP,
   ViewTaskProps
 } from '../interfaces/interface';
-import { RootState } from '../store/store';
 import {
   ItemDetails,
   OptModal,
@@ -15,6 +13,7 @@ import {
 } from './styledComponents/styles';
 import { deleteTask, setIsCompleted, setStatus } from '../store/board';
 import EditTask from './EditTask';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 
 const ViewTask = ({
   colName,
@@ -22,19 +21,19 @@ const ViewTask = ({
   taskIndex,
   handleDimClicked
 }: ViewTaskProps) => {
-  const dispatch = useDispatch();
-  const taskDetails = useSelector((state: RootState) =>
+  const dispatch = useAppDispatch();
+  const taskDetails = useAppSelector((state) =>
     state.board.data.boards
       .find((brd) => brd.name === state.board.boardName)
       ?.columns.find((col) => col.name === colName)
       ?.tasks.find((tsk) => tsk.title === taskTitle)
   );
-  const statusList = useSelector(
-    (state: RootState) =>
+  const statusList = useAppSelector(
+    (state) =>
       state.board.data.boards.find((brd) => brd.name === state.board.boardName)
         ?.columns
   );
-  const theme = useSelector((state: RootState) => state.board.theme);
+  const theme = useAppSelector((state) => state.board.theme);
 
   const [optionsClicked, setOptionsClicked] = useState(false);
   const [editClicked, setEditClicked] = useState(false);
