@@ -86,6 +86,10 @@ const Board = () => {
     setEditClicked(false);
   };
 
+  window.addEventListener('keydown', (e) => {
+    e.key === 'Escape' && closeModal();
+  });
+
   return (
     <>
       {board ? (

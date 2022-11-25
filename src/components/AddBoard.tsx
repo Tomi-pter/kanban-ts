@@ -128,6 +128,7 @@ const AddBoard = ({ closeModal }: AddBoardProps) => {
                   name="name"
                   id="name"
                   value={col.name}
+                  data-testid={`${index}col`}
                   onChange={(e) => setColName(e, index)}
                 />
                 <button type="button" onClick={() => delSubs(index)}>
@@ -140,7 +141,11 @@ const AddBoard = ({ closeModal }: AddBoardProps) => {
               + Add New Column
             </button>
           </div>
-          <button className="btn create" onClick={(e) => handleSubmit(e)}>
+          <button
+            className="btn create"
+            data-testid="modalCreate"
+            onClick={(e) => handleSubmit(e)}
+          >
             Create New Board
           </button>
         </form>

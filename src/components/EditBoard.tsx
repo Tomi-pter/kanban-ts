@@ -130,6 +130,7 @@ const EditBoard = ({ closeModal }: AddTaskProps) => {
                   name="name"
                   id="name"
                   value={col.name}
+                  data-testid={`${index}col`}
                   onChange={(e) => setColName(e, index)}
                   //   required
                 />

@@ -145,6 +145,7 @@ const AddTask = ({ closeModal }: AddTaskProps) => {
                   type="text"
                   name="title"
                   id="name"
+                  data-testid={`${index}id`}
                   value={col.title}
                   onChange={(e) => setSubsName(e, index)}
                 />
@@ -175,6 +176,7 @@ const AddTask = ({ closeModal }: AddTaskProps) => {
             type="button"
             className="btn create"
             onClick={(e) => handleSubmit(e)}
+            data-testid="modalAdd"
           >
             Add Task
           </button>

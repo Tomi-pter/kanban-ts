@@ -37,6 +37,10 @@ const Item = ({
     setItemOpen(false);
   }, [tasks?.status]);
 
+  window.addEventListener('keydown', (e) => {
+    e.key === 'Escape' && handleDimClicked();
+  });
+
   return (
     <>
       <Draggable draggableId={taskTitle} index={taskIndex}>
@@ -57,7 +61,7 @@ const Item = ({
         )}
       </Draggable>
       {itemOpen && (
-        <Modal className="item active" onClick={handleDimClicked}>
+        <Modal className="item active" onClick={handleDimClicked} title="modal">
           <ViewTask
             colName={colName}
             taskTitle={taskTitle}
