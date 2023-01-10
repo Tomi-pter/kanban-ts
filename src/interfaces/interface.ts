@@ -138,7 +138,7 @@ export interface ColList {
     title: string;
     description: string;
     status: string;
-    subtasks: { title: string; isCompleted: false }[];
+    subtasks: { title: string; isCompleted: boolean }[];
   }[];
 }
 
